@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青田研学之旅 - 三大主题探索</title>
+    <style>
+        :root {
+            --color-primary: #2C5F56;
+            --color-secondary: #8B6F4E;
+            --color-bg: #F7F5F0;
+            --color-card: #FFFFFF;
+            --color-text: #2D2D2D;
+            --color-text-light: #666666;
+            --shadow-soft: 0 8px 30px rgba(0,0,0,0.06);
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: Arial, "Microsoft YaHei", sans-serif; font-weight: bold; }
+
+        /* 滚动显现动画 */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.15s; }
+
+        /* 导航栏 */
+        header {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(247, 245, 240, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        nav ul { display: flex; justify-content: center; gap: 40px; list-style: none; padding: 18px 0; }
+        nav ul li a {
+            text-decoration: none; color: var(--color-text);
+            font-size: 0.95rem; letter-spacing: 1px;
+            position: relative; padding-bottom: 4px;
+        }
+        nav ul li a::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 2px; background: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+        nav ul li a:hover::after { width: 100%; }
+
+        /* ✅ 已修改：首屏英雄区 → 使用 04.png 作为背景图 + 雾化蒙层 */
+        .hero {
+            height: 85vh; min-height: 500px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 0 20px;
+            position: relative;
+            /* 背景图片 */
+            background: url('04.png') center/cover no-repeat;
+            /* 叠加半透明深色蒙层（增强文字对比度） */
+            background-blend-mode: overlay;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.45); /* 雾化效果核心：45% 黑色遮罩 */
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+        .hero h1 { 
+            font-size: clamp(2rem, 5vw, 3.5rem); 
+            margin-bottom: 16px; 
+            letter-spacing: 4px; 
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3); 
+        }
+        .hero p { 
+            font-size: clamp(0.9rem, 2vw, 1.15rem); 
+            opacity: 0.9; 
+            letter-spacing: 2px; 
+            font-weight: 300; 
+        }
+        .scroll-hint { 
+            position: absolute; 
+            bottom: 40px; 
+            animation: bounce 2s infinite; 
+            opacity: 0.7; 
+            font-size: 0.8rem; 
+            letter-spacing: 2px; 
+            z-index: 2; 
+        }
+        @keyframes bounce { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(8px); } 
+        }
+
+        /* 其余部分保持不变 */
+        .section { max-width: 1100px; margin: 80px auto; padding: 0 30px; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-size: 2rem; color: var(--color-primary); margin-bottom: 10px; letter-spacing: 2px; }
+        .section-header .divider { width: 60px; height: 3px; background: var(--color-secondary); margin: 0 auto; border-radius: 2px; }
+
+        .card {
+            background: var(--color-card); border-radius: var(--radius);
+            box-shadow: var(--shadow-soft); overflow: hidden;
+            display: flex; flex-wrap: wrap;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+        .card.reverse { flex-direction: row-reverse; }
+
+        .card-image { flex: 1; min-width: 320px; min-height: 350px; overflow: hidden; position: relative; background: #e8e6e1; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; display: block; }
+        .card:hover .card-image img { transform: scale(1.05); }
+
+        .card-content { flex: 1; min-width: 320px; padding: 50px 45px; display: flex; flex-direction: column; justify-content: center; }
+        .card-content h3 { font-size: 1.5rem; color: var(--color-text); margin-bottom: 16px; letter-spacing: 1px; }
+        .card-content p { color: var(--color-text-light); margin-bottom: 20px; font-size: 0.95rem; }
+        .card-content ul { list-style: none; margin-bottom: 28px; }
+        .card-content ul li { padding: 6px 0; font-size: 0.9rem; color: var(--color-text); display: flex; align-items: flex-start; gap: 10px; }
+        .card-content ul li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--color-secondary); margin-top: 10px; flex-shrink: 0; }
+
+        .btn-elegant {
+            display: inline-block; padding: 12px 32px;
+            border: 1.5px solid var(--color-primary); color: var(--color-primary);
+            text-decoration: none; border-radius: 30px; font-size: 0.85rem;
+            letter-spacing: 2px; transition: all 0.3s; width: fit-content;
+        }
+        .btn-elegant:hover { background: var(--color-primary); color: white; }
+
+        footer { text-align: center; padding: 50px 20px; color: var(--color-text-light); font-size: 0.8rem; letter-spacing: 1px; border-top: 1px solid rgba(0,0,0,0.06); margin-top: 60px; }
+
+        @media (max-width: 768px) {
+            .hero { height: 70vh; }
+            nav ul { gap: 20px; padding: 14px 0; }
+            nav ul li a { font-size: 0.8rem; }
+            .card, .card.reverse { flex-direction: column; }
+            .card-image { min-height: 220px; min-width: 100%; }
+            .card-content { padding: 30px 25px; }
+            .section { margin: 50px auto; padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#section1">侨乡风情</a></li>
+                <li><a href="#section2">农业遗产</a></li>
+                <li><a href="#section3">人文古迹</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ✅ 已重构：使用 04.png 作背景 + 文字置于蒙层之上 -->
+    <div class="hero">
+        <div class="hero-content reveal">
+            <h1>探秘侨乡 · 研学青田</h1>
+            <p class="reveal-delay-1">中西合璧的城市风貌 / 千年农耕智慧 / 刘伯温求学圣地</p>
+        </div>
+        <div class="scroll-hint">↓ 向下探索 ↓</div>
+    </div>
+
+    <!-- 第一部分：侨乡风情 -->
+    <section id="section1" class="section">
+        <div class="section-header reveal">
+            <h2>侨乡风情与城市文化</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="card reveal">
+            <div class="card-image">
+                <img src="01.png" alt="青田欧式建筑街拍">
+            </div>
+            <div class="card-content">
+                <h3>感受"小欧洲"的独特魅力</h3>
+                <p>青田被誉为"中国咖啡之乡"与"石雕之都"，漫步临江东路，仿佛置身南欧小镇。</p>
+                <ul>
+                    <li>🏛️ 青田石雕博物馆：欣赏6000年石雕历史与精美展品</li>
+                    <li>🏰 临江东路与景云桥：漫步纯正欧式建筑群，打卡绝美江景</li>
+                    <li>☕ 咖啡文化探索：探访本地知名咖啡馆，体验高密度咖啡文化</li>
+                </ul>
+                <a href="#" class="btn-elegant">查看研学路线地图 →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第二部分：农业遗产 -->
+    <section id="section2" class="section">
+        <div class="section-header reveal">
+            <h2>全球重要农业文化遗产</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="card reverse reveal">
+            <div class="card-image">
+                <img src="02.png" alt="龙现村稻鱼共生梯田">
+            </div>
+            <div class="card-content">
+                <h3>探究"稻鱼共生"的生态密码</h3>
+                <p>走进方山乡龙现村，沉浸式了解传承1200年的农耕智慧与生态循环哲学。</p>
+                <ul>
+                    <li>🌾 稻鱼共生系统博物馆：沉浸式了解千年农耕智慧</li>
+                    <li>🐟 龙现村实地考察：观察稻田田鱼，体验抛秧、放鱼农事</li>
+                    <li>🍚 品尝田鱼捞饭：体验地道的侨乡农家美食文化</li>
+                </ul>
+                <a href="#" class="btn-elegant">预约农事体验活动 →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第三部分：人文古迹 -->
+    <section id="section3" class="section">
+        <div class="section-header reveal">
+            <h2>人文古迹与自然探索</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="card reveal">
+            <div class="card-image">
+                <img src="03.png" alt="石门洞瀑布全景">
+            </div>
+            <div class="card-content">
+                <h3>跨学科的历史与自然课堂</h3>
+                <p>结合地理成因、历史典故与诗词文学，在山水之间完成一场立体的人文研学。</p>
+                <ul>
+                    <li>⛰️ 石门洞景区：观赏"华东第一瀑"的自然奇观与地质构造</li>
+                    <li>📜 刘伯温求学地：探访诗碑林苑，学习明清思想与历史典故</li>
+                    <li>⛴️ 特色轮渡体验：乘坐轮渡过瓯江，感受独特的进山方式</li>
+                </ul>
+                <a href="#" class="btn-elegant">查看景区游览攻略 →</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 青田研学之旅 | 数智传文脉 · 探索浙南侨乡之美</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+            
+            document.querySelectorAll('.reveal').forEach(function(el) {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
