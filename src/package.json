@@ -1,0 +1,43 @@
+{
+    "app_name": "0451",
+    "main": "index.html",
+    "name": "002",
+    "nodejs": false,
+    "webexe_settings": {
+        "blacklist": "",
+        "custom_script": "",
+        "download_dir": "D:/output",
+        "export_dir": "D:/output",
+        "force_download": false,
+        "nw_compression_level": 0,
+        "output_pattern": "",
+        "sdk_build": false,
+        "uncompressed_folder": true,
+        "whitelist": "",
+        "windows-x32": false,
+        "windows-x64": true
+    },
+    "webkit": {
+        "double_tap_to_zoom_enabled": false,
+        "plugin": false
+    },
+    "window": {
+        "always_on_top": false,
+        "as_desktop": false,
+        "frame": true,
+        "fullscreen": false,
+        "height": 1020,
+        "icon": "01.png",
+        "id": "002",
+        "kiosk": true,
+        "kiosk_emulation": false,
+        "resizable": true,
+        "show": true,
+        "show_in_taskbar": false,
+        "title": "wedpx",
+        "transparent": false,
+        "visible": false,
+        "visible_on_all_workspaces": false,
+        "width": 1920
+    }
+}
